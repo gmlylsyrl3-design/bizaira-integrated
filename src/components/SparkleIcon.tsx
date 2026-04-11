@@ -1,23 +1,17 @@
+import { Sparkles } from "lucide-react";
+
 interface SparkleIconProps {
+  className?: string;
   size?: number;
 }
 
-const SparkleIcon = ({ size = 20 }: SparkleIconProps) => (
-  <span
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      width: size,
-      height: size,
-      borderRadius: "0.75rem",
-      background: "linear-gradient(135deg, #f59e0b, #8b5cf6)",
-      color: "white",
-      fontSize: size * 0.7,
-    }}
-  >
-    ✨
-  </span>
-);
+const SparkleIcon = ({ className = "", size = 16 }: SparkleIconProps) => {
+  return (
+    <Sparkles
+      size={size}
+      className={`text-primary animate-sparkle-pulse ${className}`}
+    />
+  );
+};
 
 export default SparkleIcon;

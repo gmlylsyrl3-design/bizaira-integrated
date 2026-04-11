@@ -1,25 +1,16 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useI18n } from "@/lib/i18n";
-import SparkleIcon from "./SparkleIcon";
+import SparkleIcon from "@/components/SparkleIcon";
 import {
-  ArrowRight,
-  ArrowLeft,
-  Sparkles,
-  Upload,
-  X,
-  Download,
-  RefreshCw,
-  Copy,
-  Check,
-  ChevronRight,
-  ChevronLeft,
+  ArrowRight, ArrowLeft, Sparkles, Upload, X, Download, RefreshCw,
+  Copy, Check, ChevronRight, ChevronLeft,
 } from "lucide-react";
 
 export interface WizardQuestion {
   id: string;
   question: string;
-  type: "select" | "text" | "textarea" | "upload" | "chips";
+  type: "select" | "multiselect" | "text" | "textarea" | "upload" | "chips";
   options?: { id: string; label: string; desc?: string }[];
   placeholder?: string;
   maxUploads?: number;
@@ -47,10 +38,11 @@ interface Props {
 }
 
 const AIWizard = ({ config, onGenerate, mockResult, mockDelay = 2500 }: Props) => {
-  const { lang } = useI18n();
+  const { t, lang } = useI18n();
   const BackArrow = lang === "he" ? ArrowRight : ArrowLeft;
   const NextArrow = lang === "he" ? ChevronLeft : ChevronRight;
   const PrevArrow = lang === "he" ? ChevronRight : ChevronLeft;
+
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({});
   const [isGenerating, setIsGenerating] = useState(false);
@@ -58,13 +50,14 @@ const AIWizard = ({ config, onGenerate, mockResult, mockDelay = 2500 }: Props) =
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
   const questions = config.questions;
   const current = questions[currentStep];
   const isLastStep = currentStep === questions.length - 1;
   const progress = ((currentStep + 1) / questions.length) * 100;
 
   const setAnswer = (id: string, value: any) => {
-    setAnswers((prev) => ({ ...prev, [id]: value }));
+    setAnswers(prev => ({ ...prev, [id]: value }));
   };
 
   const handleGenerate = async () => {
@@ -72,16 +65,22 @@ const AIWizard = ({ config, onGenerate, mockResult, mockDelay = 2500 }: Props) =
     setError(null);
     try {
       if (onGenerate) {
-        const response = await onGenerate(answers);
-        setResult(response || mockResult || "✨ Your result is ready!");
+        const res = await onGenerate(answers);
+        if (res) {
+          setResult(res);
+        } else {
+          setResult(mockResult || "✨ התוצאה שלך מוכנה!");
+        }
       } else {
-        await new Promise((resolve) => setTimeout(resolve, mockDelay));
-        setResult(mockResult || "✨ Your result is ready!");
+        // Fallback to mock
+        await new Promise(r => setTimeout(r, mockDelay));
+        setResult(mockResult || "✨ התוצאה שלך מוכנה!");
       }
     } catch (err: any) {
       console.error("Generation error:", err);
-      setError(err?.message || "Generation failed");
-      setResult(mockResult || "✨ Your result is ready!");
+      setError(err.message || "שגיאה ביצירה");
+      // Fallback to mock on error
+      setResult(mockResult || "✨ התוצאה שלך מוכנה!");
     } finally {
       setIsGenerating(false);
     }
@@ -97,15 +96,16 @@ const AIWizard = ({ config, onGenerate, mockResult, mockDelay = 2500 }: Props) =
 
   const handleDownload = () => {
     if (!result) return;
+    
     if (typeof result === "string" && result.startsWith("data:")) {
+      // Base64 image or file - download directly
       const a = document.createElement("a");
       a.href = result;
       const ext = config.downloadFormat || "png";
       a.download = `bizaira-creation.${ext}`;
       a.click();
-      return;
-    }
-    if (Array.isArray(result)) {
+    } else if (Array.isArray(result)) {
+      // Download first image from gallery
       result.forEach((item, i) => {
         if (item.startsWith("data:")) {
           const a = document.createElement("a");
@@ -114,17 +114,22 @@ const AIWizard = ({ config, onGenerate, mockResult, mockDelay = 2500 }: Props) =
           a.click();
         }
       });
-      return;
-    }
-    if (typeof result === "string") {
+    } else if (typeof result === "string" && !result.startsWith("data:")) {
+      // Text result - download as text file
       const blob = new Blob([result], { type: "text/plain;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "bizaira-creation.txt";
+      a.download = `bizaira-creation.txt`;
       a.click();
       URL.revokeObjectURL(url);
     }
+  };
+
+  const handleNewVersion = () => {
+    setResult(null);
+    setIsGenerating(false);
+    setError(null);
   };
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,13 +137,14 @@ const AIWizard = ({ config, onGenerate, mockResult, mockDelay = 2500 }: Props) =
     if (!files) return;
     const maxUploads = current?.maxUploads || 1;
     const existing = (answers[current.id] as string[]) || [];
-    Array.from(files).slice(0, maxUploads - existing.length).forEach((file) => {
+    
+    Array.from(files).slice(0, maxUploads - existing.length).forEach(file => {
       const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          setAnswers((prev) => ({
+      reader.onload = (ev) => {
+        if (ev.target?.result) {
+          setAnswers(prev => ({
             ...prev,
-            [current.id]: [...(prev[current.id] || []), event.target.result as string],
+            [current.id]: [...(prev[current.id] || []), ev.target!.result as string],
           }));
         }
       };
@@ -147,80 +153,91 @@ const AIWizard = ({ config, onGenerate, mockResult, mockDelay = 2500 }: Props) =
   };
 
   const removeUpload = (idx: number) => {
-    setAnswers((prev) => ({
+    setAnswers(prev => ({
       ...prev,
-      [current.id]: (prev[current.id] as string[]).filter((_: string, index: number) => index !== idx),
+      [current.id]: (prev[current.id] as string[]).filter((_, i) => i !== idx),
     }));
   };
 
+  // Result screen
   if (result) {
     const isRealImage = typeof result === "string" && result.startsWith("data:image");
-    const isRealGallery = Array.isArray(result) && result.length > 0 && result[0].startsWith("data:image");
+    const isRealGallery = Array.isArray(result) && result.length > 0 && result[0].startsWith("data:");
 
     return (
       <div className="min-h-screen pb-24">
         <Header title={config.title} subtitle={config.subtitle} backRoute={config.backRoute} />
-        <div className="max-w-3xl mx-auto px-4 pt-8 space-y-6">
+        <div className="max-w-lg mx-auto px-4 pt-8 space-y-6">
           <div className="text-center animate-fade-in-up">
             <div className="w-16 h-16 mx-auto rounded-2xl gradient-glow flex items-center justify-center mb-4 glow-shadow">
-              <Sparkles size={28} className="text-white" />
+              <Sparkles size={28} className="text-primary-foreground" />
             </div>
-            <h2 className="text-xl font-bold text-slate-900 mb-1">{config.resultTitle}</h2>
-            <p className="text-sm text-slate-600">{lang === "he" ? "התוצאה מוכנה — בחר מה לעשות" : "Result is ready — choose what to do"}</p>
+            <h2 className="text-xl font-bold text-foreground mb-1">{config.resultTitle}</h2>
+            <p className="text-sm text-muted-foreground">{lang === "he" ? "התוצאה מוכנה — בחר מה לעשות" : "Result is ready — choose what to do"}</p>
           </div>
 
           {typeof result === "string" && config.resultType === "text" && (
-            <div className="glass-card rounded-2xl p-5">
-              <pre className="whitespace-pre-wrap text-sm text-slate-800">{result}</pre>
+            <div className="glass-card rounded-xl p-5 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+              <div className="bg-background/50 rounded-lg p-4 whitespace-pre-wrap text-sm text-foreground leading-relaxed border border-border/30">
+                {result}
+              </div>
             </div>
           )}
 
           {config.resultType === "preview" && isRealImage && (
-            <div className="glass-card rounded-2xl p-5">
-              <img src={result as string} alt="Generated" className="w-full rounded-2xl" />
+            <div className="glass-card rounded-xl p-5 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+              <img src={result as string} alt="Generated" className="w-full rounded-lg border border-border/30" />
+            </div>
+          )}
+
+          {config.resultType === "preview" && !isRealImage && (
+            <div className="glass-card rounded-xl p-5 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+              <div className="aspect-video rounded-lg bg-muted flex items-center justify-center border border-border/30">
+                <div className="text-center space-y-2">
+                  {config.icon}
+                  <p className="text-xs text-muted-foreground">{lang === "he" ? "תצוגה מקדימה" : "Preview"}</p>
+                </div>
+              </div>
             </div>
           )}
 
           {config.resultType === "gallery" && isRealGallery && (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-3 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
               {(result as string[]).map((img, i) => (
-                <div key={i} className="rounded-2xl overflow-hidden border border-slate-200">
-                  <img src={img} alt={`Version ${i + 1}`} className="w-full h-full object-cover" />
+                <div key={i} className="glass-card rounded-xl p-2 aspect-square">
+                  <img src={img} alt={`Version ${i + 1}`} className="w-full h-full rounded-lg object-cover" />
                 </div>
               ))}
             </div>
           )}
 
-          <div className="space-y-3">
+          {config.resultType === "gallery" && !isRealGallery && Array.isArray(result) && (
+            <div className="grid grid-cols-2 gap-3 animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+              {result.map((img, i) => (
+                <div key={i} className="glass-card rounded-xl p-2 aspect-square">
+                  <div className="w-full h-full rounded-lg bg-muted flex items-center justify-center">
+                    <p className="text-xs text-muted-foreground">{lang === "he" ? `גרסה ${i + 1}` : `Version ${i + 1}`}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="space-y-2 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
             {config.downloadLabel && (
-              <button
-                type="button"
-                onClick={handleDownload}
-                className="w-full rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white"
-              >
-                <Download size={16} className="inline-block mr-2" />
+              <button onClick={handleDownload} className="w-full gradient-glow glow-shadow text-primary-foreground font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-all">
+                <Download size={18} />
                 {config.downloadLabel}
               </button>
             )}
             {config.resultType === "text" && (
-              <button
-                type="button"
-                onClick={handleCopy}
-                className="w-full rounded-full border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900"
-              >
-                {copied ? <><Check size={16} />Copied</> : <><Copy size={16} />Copy</>}
+              <button onClick={handleCopy} className="w-full glass-card py-3 rounded-xl text-sm font-bold text-foreground flex items-center justify-center gap-2 hover:scale-[1.02] transition-all">
+                {copied ? <><Check size={16} className="text-green-400" />{lang === "he" ? "הועתק!" : "Copied!"}</> : <><Copy size={16} />{lang === "he" ? "העתק" : "Copy"}</>}
               </button>
             )}
-            <button
-              type="button"
-              onClick={() => {
-                setResult(null);
-                setError(null);
-              }}
-              className="w-full rounded-full bg-slate-100 px-4 py-3 text-sm font-semibold text-slate-900"
-            >
-              <RefreshCw size={16} className="inline-block mr-2" />
-              {lang === "he" ? "צור שוב" : "Create again"}
+            <button onClick={handleNewVersion} className="w-full glass-card py-3 rounded-xl text-sm font-bold text-foreground flex items-center justify-center gap-2 hover:scale-[1.02] transition-all">
+              <RefreshCw size={16} />
+              {lang === "he" ? "צור גרסה נוספת" : "Create Another Version"}
             </button>
           </div>
         </div>
@@ -231,154 +248,206 @@ const AIWizard = ({ config, onGenerate, mockResult, mockDelay = 2500 }: Props) =
   return (
     <div className="min-h-screen pb-24">
       <Header title={config.title} subtitle={config.subtitle} backRoute={config.backRoute} />
-      <div className="max-w-3xl mx-auto px-4 pt-6 space-y-6">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <span>{currentStep + 1} / {questions.length}</span>
-            <span>{Math.round(progress)}%</span>
+
+      <div className="max-w-lg mx-auto px-4 pt-6 space-y-6">
+        {/* Progress */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-muted-foreground">
+              {currentStep + 1} / {questions.length}
+            </span>
+            <span className="text-muted-foreground">
+              {Math.round(progress)}%
+            </span>
           </div>
-          <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
-            <div className="h-full rounded-full bg-gradient-to-r from-orange-400 via-fuchsia-500 to-cyan-500" style={{ width: `${progress}%` }} />
+          <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+            <div
+              className="h-full gradient-glow rounded-full transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            />
           </div>
         </div>
 
-        <div className="glass-card rounded-3xl p-6">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-10 h-10 rounded-2xl gradient-glow flex items-center justify-center text-white">
-              <Sparkles size={18} />
+        {/* Question */}
+        <div className="glass-card rounded-2xl p-6 animate-fade-in-up" key={current.id}>
+          <div className="flex items-start gap-3 mb-5">
+            <div className="w-10 h-10 rounded-xl gradient-glow flex items-center justify-center flex-shrink-0">
+              <Sparkles size={18} className="text-primary-foreground" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-900">{current.question}</h2>
+              <h2 className="text-base font-bold text-foreground">{current.question}</h2>
             </div>
           </div>
 
+          {/* Select */}
           {current.type === "select" && current.options && (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {current.options.map((option) => (
+            <div className="grid grid-cols-2 gap-2">
+              {current.options.map(opt => (
                 <button
-                  key={option.id}
-                  type="button"
-                  onClick={() => setAnswer(current.id, option.id)}
-                  className={`rounded-3xl border p-4 text-left transition ${answers[current.id] === option.id ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white text-slate-900"}`}
+                  key={opt.id}
+                  onClick={() => setAnswer(current.id, opt.id)}
+                  className={`p-3 rounded-xl text-start transition-all ${
+                    answers[current.id] === opt.id
+                      ? "gradient-glow text-primary-foreground glow-shadow"
+                      : "bg-muted hover:bg-muted/80"
+                  }`}
                 >
-                  <div className="font-semibold">{option.label}</div>
-                  {option.desc && <p className="text-sm text-slate-500 mt-1">{option.desc}</p>}
+                  <div className="text-sm font-bold">{opt.label}</div>
+                  {opt.desc && (
+                    <div className={`text-xs mt-0.5 ${answers[current.id] === opt.id ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
+                      {opt.desc}
+                    </div>
+                  )}
                 </button>
               ))}
             </div>
           )}
 
+          {/* Chips */}
+          {current.type === "chips" && current.options && (
+            <div className="flex flex-wrap gap-2">
+              {current.options.map(opt => (
+                <button
+                  key={opt.id}
+                  onClick={() => setAnswer(current.id, opt.id)}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                    answers[current.id] === opt.id
+                      ? "gradient-glow text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Text */}
           {current.type === "text" && (
             <input
-              type="text"
               value={answers[current.id] || ""}
-              onChange={(e) => setAnswer(current.id, e.target.value)}
+              onChange={e => setAnswer(current.id, e.target.value)}
               placeholder={current.placeholder}
-              className="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-900"
+              className="w-full bg-background/50 border border-border/50 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
             />
           )}
 
+          {/* Textarea */}
           {current.type === "textarea" && (
             <textarea
               value={answers[current.id] || ""}
-              onChange={(e) => setAnswer(current.id, e.target.value)}
+              onChange={e => setAnswer(current.id, e.target.value)}
               placeholder={current.placeholder}
-              className="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-900 min-h-[10rem] resize-none"
+              className="w-full bg-background/50 border border-border/50 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground resize-none h-28 focus:outline-none focus:ring-2 focus:ring-ring/50"
             />
           )}
 
+          {/* Upload */}
           {current.type === "upload" && (
             <div className="space-y-3">
-              <div className="grid gap-3 sm:grid-cols-2">
-                {((answers[current.id] as string[]) || []).map((img, index) => (
-                  <div key={index} className="relative overflow-hidden rounded-3xl border border-slate-200 bg-slate-100">
-                    <img src={img} alt={`upload-${index}`} className="h-40 w-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => removeUpload(index)}
-                      className="absolute right-2 top-2 rounded-full bg-slate-900/80 p-2 text-white"
-                    >
-                      <X size={14} />
+              <div className="grid grid-cols-2 gap-3">
+                {((answers[current.id] as string[]) || []).map((img: string, idx: number) => (
+                  <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-border/50">
+                    <img src={img} alt={`upload ${idx}`} className="w-full h-full object-cover" />
+                    <button onClick={() => removeUpload(idx)} className="absolute top-1.5 start-1.5 bg-black/60 backdrop-blur p-1 rounded-full">
+                      <X size={14} className="text-white" />
                     </button>
                   </div>
                 ))}
                 {((answers[current.id] as string[]) || []).length < (current.maxUploads || 1) && (
                   <button
-                    type="button"
                     onClick={() => fileRef.current?.click()}
-                    className="rounded-3xl border border-dashed border-slate-300 bg-white px-4 py-6 text-sm text-slate-600"
+                    className="aspect-square rounded-xl border-2 border-dashed border-border/50 flex flex-col items-center justify-center gap-2 hover:border-primary/50 transition-all"
                   >
-                    <Upload size={22} className="mx-auto block" />
-                    <span className="mt-2 block">{lang === "he" ? "העלאת קובץ" : "Upload file"}</span>
+                    <Upload size={22} className="text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground">{lang === "he" ? "העלאה" : "Upload"}</span>
                   </button>
                 )}
               </div>
               <input ref={fileRef} type="file" accept="image/*" multiple onChange={handleUpload} className="hidden" />
             </div>
           )}
+        </div>
 
-          {error && <div className="rounded-3xl bg-rose-100 border border-rose-200 p-4 text-sm text-rose-700">{error}</div>}
-
-          <div className="flex gap-3 mt-3 flex-col sm:flex-row">
-            {currentStep > 0 && (
-              <button
-                type="button"
-                onClick={() => setCurrentStep((prev) => prev - 1)}
-                className="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900"
-              >
-                <PrevArrow size={16} className="inline-block mr-2" />
-                {lang === "he" ? "הקודם" : "Back"}
-              </button>
-            )}
-            {!isLastStep ? (
-              <button
-                type="button"
-                onClick={() => setCurrentStep((prev) => prev + 1)}
-                className="rounded-3xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white"
-              >
-                {lang === "he" ? "המשך" : "Continue"}
-                <NextArrow size={16} className="inline-block ml-2" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleGenerate}
-                disabled={isGenerating}
-                className="rounded-3xl bg-gradient-to-r from-orange-400 via-fuchsia-500 to-cyan-500 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
-              >
-                {isGenerating ? "Working..." : config.generateLabel}
-              </button>
-            )}
+        {/* Error message */}
+        {error && (
+          <div className="bg-destructive/10 border border-destructive/30 rounded-xl p-3 text-sm text-destructive">
+            {error}
           </div>
+        )}
 
-          {!isLastStep && (
-            <p className="text-center text-xs text-slate-500 mt-2">
-              {lang === "he" ? "אפשר לדלג — AI ישלים את החסר" : "You can skip — AI will fill in the blanks"}
-            </p>
+        {/* Navigation */}
+        <div className="flex items-center gap-3">
+          {currentStep > 0 && (
+            <button
+              onClick={() => setCurrentStep(prev => prev - 1)}
+              className="glass-card px-4 py-3 rounded-xl text-sm font-bold text-foreground flex items-center gap-1.5 hover:scale-[1.02] transition-all"
+            >
+              <PrevArrow size={16} />
+              {lang === "he" ? "הקודם" : "Back"}
+            </button>
+          )}
+          
+          {!isLastStep ? (
+            <button
+              onClick={() => setCurrentStep(prev => prev + 1)}
+              className="flex-1 gradient-glow glow-shadow text-primary-foreground font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-all"
+            >
+              {lang === "he" ? "המשך" : "Continue"}
+              <NextArrow size={16} />
+            </button>
+          ) : (
+            <button
+              onClick={handleGenerate}
+              disabled={isGenerating}
+              className="flex-1 gradient-glow glow-shadow text-primary-foreground font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-all disabled:opacity-50 animate-glow-pulse"
+            >
+              {isGenerating ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                  {config.generatingLabel}
+                </>
+              ) : (
+                <>
+                  <Sparkles size={20} />
+                  {config.generateLabel}
+                </>
+              )}
+            </button>
           )}
         </div>
+
+        {/* Skip hint */}
+        {!isLastStep && (
+          <p className="text-center text-xs text-muted-foreground">
+            {lang === "he" ? "אפשר לדלג — AI ישלים את החסר" : "You can skip — AI will fill in the blanks"}
+          </p>
+        )}
       </div>
     </div>
   );
 };
 
-const Header = ({ title, subtitle, backRoute }: { title: string; subtitle: string; backRoute?: string }) => {
+function Header({ title, subtitle, backRoute }: { title: string; subtitle: string; backRoute?: string }) {
   const { lang } = useI18n();
   const BackArrow = lang === "he" ? ArrowRight : ArrowLeft;
 
   return (
-    <div className="sticky top-0 z-40 glass-card border-b border-slate-200 px-4 py-4">
-      <div className="flex items-center gap-3 max-w-3xl mx-auto">
-        <Link to={backRoute || "/create"} className="rounded-2xl border border-slate-200 bg-white p-3">
-          <BackArrow size={18} />
-        </Link>
-        <div>
-          <h1 className="text-lg font-bold text-slate-900">{title}</h1>
-          <p className="text-sm text-slate-600">{subtitle}</p>
+    <div className="sticky top-0 z-40 glass-card border-b border-border/40 px-4 py-3">
+      <div className="flex items-center justify-between max-w-lg mx-auto">
+        <div className="flex items-center gap-3">
+          <Link to={backRoute || "/create"} className="glass-card p-2 rounded-lg hover:scale-105 transition-all">
+            <BackArrow size={18} className="text-foreground" />
+          </Link>
+          <div>
+            <h1 className="text-base font-bold text-foreground">{title}</h1>
+            <p className="text-xs text-muted-foreground">{subtitle}</p>
+          </div>
         </div>
+        <SparkleIcon size={18} />
       </div>
     </div>
   );
-};
+}
 
 export default AIWizard;
