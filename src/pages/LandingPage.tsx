@@ -40,11 +40,11 @@ const LandingPage = () => {
         <h1 
           className="text-4xl md:text-6xl font-black leading-tight tracking-tight"
           style={{
-            background: "linear-gradient(135deg, hsl(39 48% 56%), hsl(270 30% 60%), hsl(39 50% 50%))",
+            background: "linear-gradient(135deg, hsl(205 100% 47%), hsl(206 96% 40%), hsl(212 80% 55%))",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",
-            textShadow: "0 0 60px hsl(39 48% 56% / 0.3)"
+            textShadow: "0 0 60px hsl(205 100% 47% / 0.3)"
           }}
         >
           {lang === "he" ? "הכל במקום אחד" : "Everything In One Place"}
@@ -53,7 +53,7 @@ const LandingPage = () => {
         <div 
           className="w-24 h-1 mx-auto mt-5 rounded-full"
           style={{ 
-            background: "linear-gradient(90deg, transparent, hsl(39 48% 56%), hsl(270 30% 65%), transparent)" 
+            background: "linear-gradient(90deg, transparent, hsl(205 100% 47%), hsl(206 96% 40%), transparent)" 
           }}
           aria-hidden="true"
         />

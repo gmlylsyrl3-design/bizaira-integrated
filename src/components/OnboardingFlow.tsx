@@ -17,8 +17,8 @@ interface OnboardingFlowProps {
 
 type Step = "greeting" | "business" | "business-info" | "audience" | "audience-info" | "goal" | "done";
 
-const PURPLE = "#0D2344";
-const NAVY   = "#0D2344";
+const PURPLE = "#1D4ED8";
+const NAVY   = "#1E40AF";
 
 const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const { lang } = useI18n();
@@ -161,7 +161,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                     className="flex flex-col items-center gap-2 py-3.5 px-2 rounded-2xl border-2 transition-all text-center"
                     style={{
                       background:   selected ? NAVY      : "hsl(0 0% 100%)",
-                      borderColor:  selected ? NAVY      : "hsl(220 16% 90%)",
+                      borderColor:  selected ? NAVY      : "hsl(214 24% 90%)",
                       color:        selected ? "#fff"    : NAVY,
                       boxShadow:    selected ? `0 4px 16px -4px ${NAVY}44` : "none",
                       transform:    selected ? "scale(1.03)" : "scale(1)",
@@ -187,7 +187,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
         {/* ─── Screen 3: Business Info (Outline CTA) ─── */}
         {step === "business-info" && (
           <div className="animate-fade-in text-center">
-            <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: "hsl(216 50% 94%)" }}>
+            <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: "hsl(206 100% 94%)" }}>
               <Check size={24} style={{ color: PURPLE }} />
             </div>
             <h2 className="text-2xl font-black mb-3" style={{ color: NAVY }}>
@@ -223,7 +223,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                     className="flex items-center gap-3 py-3 px-4 rounded-2xl border-2 transition-all text-start"
                     style={{
                       background:  selected ? NAVY   : "hsl(0 0% 100%)",
-                      borderColor: selected ? NAVY   : "hsl(220 16% 90%)",
+                      borderColor: selected ? NAVY   : "hsl(214 24% 90%)",
                       color:       selected ? "#fff" : NAVY,
                       boxShadow:   selected ? `0 4px 16px -4px ${NAVY}44` : "none",
                     }}
@@ -239,7 +239,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
               <button
                 onClick={() => setStep("business")}
                 className="w-12 h-12 rounded-xl border-2 flex items-center justify-center transition-all hover:bg-muted shrink-0"
-                style={{ borderColor: "hsl(220 16% 90%)", color: NAVY }}
+                style={{ borderColor: "hsl(214 24% 90%)", color: NAVY }}
               >
                 <ArrowLeft size={16} className={isHe ? "rotate-180" : ""} />
               </button>
@@ -257,7 +257,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
         {/* ─── Screen 5: Audience Info (Outline CTA) ─── */}
         {step === "audience-info" && (
           <div className="animate-fade-in text-center">
-            <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: "hsl(216 50% 94%)" }}>
+            <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: "hsl(206 100% 94%)" }}>
               <Check size={24} style={{ color: PURPLE }} />
             </div>
             <h2 className="text-2xl font-black mb-3" style={{ color: NAVY }}>
@@ -293,7 +293,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                     className="flex items-center gap-3 py-3.5 px-4 rounded-2xl border-2 transition-all text-start"
                     style={{
                       background:  selected ? PURPLE  : "hsl(0 0% 100%)",
-                      borderColor: selected ? PURPLE  : "hsl(220 16% 90%)",
+                      borderColor: selected ? PURPLE  : "hsl(214 24% 90%)",
                       color:       selected ? "#fff"  : NAVY,
                       boxShadow:   selected ? `0 4px 16px -4px ${PURPLE}55` : "none",
                     }}
@@ -309,7 +309,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
               <button
                 onClick={() => setStep("audience")}
                 className="w-12 h-12 rounded-xl border-2 flex items-center justify-center transition-all hover:bg-muted shrink-0"
-                style={{ borderColor: "hsl(220 16% 90%)", color: NAVY }}
+                style={{ borderColor: "hsl(214 24% 90%)", color: NAVY }}
               >
                 <ArrowLeft size={16} className={isHe ? "rotate-180" : ""} />
               </button>
@@ -329,7 +329,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
           <div className="animate-fade-in text-center">
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 glow-shadow"
-              style={{ background: `linear-gradient(135deg, ${PURPLE}, hsl(216 68% 14%))` }}
+              style={{ background: `linear-gradient(135deg, ${PURPLE}, ${NAVY})` }}
             >
               <Check size={28} className="text-white" strokeWidth={2.5} />
             </div>
@@ -392,8 +392,8 @@ const StepHeader = ({ num, total, title }: { num: number; total: number; title: 
           className="h-1.5 rounded-full flex-1 transition-all duration-500"
           style={{
             background: i < num
-              ? "linear-gradient(90deg, hsl(216 68% 16%), hsl(216 68% 15%))"
-              : "hsl(220 16% 90%)",
+              ? "linear-gradient(90deg, hsl(206 90% 36%), hsl(206 80% 30%))"
+              : "hsl(214 24% 90%)",
           }}
         />
       ))}
@@ -401,7 +401,7 @@ const StepHeader = ({ num, total, title }: { num: number; total: number; title: 
     <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest mb-1">
       שלב {num} מתוך {total}
     </p>
-    <h2 className="text-xl font-black" style={{ color: "hsl(219 65% 17%)" }}>{title}</h2>
+    <h2 className="text-xl font-black" style={{ color: "hsl(214 100% 22%)" }}>{title}</h2>
   </div>
 );
 

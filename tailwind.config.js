@@ -7,29 +7,28 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Primary palette - Gold/Cream design
         primary: {
-          50: '#fefce8',
-          100: '#fef3c7',
-          200: '#fde68a',
-          300: '#fcd34d',
-          400: '#fbbf24',
-          500: '#f59e0b', // Primary orange/gold
-          600: '#d97706',
-          700: '#b45309',
-          800: '#92400e',
-          900: '#78350f',
+          50: '#ebf2ff',
+          100: '#d8e4ff',
+          200: '#b7cdff',
+          300: '#8db2ff',
+          400: '#5f8afc',
+          500: '#3b6cf7',
+          600: '#2f57d4',
+          700: '#243ea0',
+          800: '#1d3278',
+          900: '#182a59',
         },
         cream: {
-          50: '#fefce8',
-          100: '#fef3c7',
-          200: '#fde68a',
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
         },
-        gold: '#f59e0b',
+        gold: '#3b82f6',
         accent: {
-          purple: '#8b5cf6',
-          pink: '#ec4899',
-          cyan: '#06b6d4',
+          blue: '#3b82f6',
+          sky: '#60a5fa',
+          slate: '#64748b',
         },
       },
       fontFamily: {

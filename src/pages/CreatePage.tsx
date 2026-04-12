@@ -5,8 +5,8 @@ import {
   ChevronLeft, ChevronRight,
 } from "lucide-react";
 
-const NAVY   = "#0D2344";
-const PURPLE = "#0D2344";
+const NAVY   = "#1E40AF";
+const PURPLE = "#1D4ED8";
 
 const CreatePage = () => {
   const navigate = useNavigate();
@@ -89,7 +89,7 @@ const CreatePage = () => {
               <div className="flex items-center gap-4">
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-110"
-                  style={{ background: "hsl(252 73% 96%)" }}
+                  style={{ background: "hsl(206 100% 96%)" }}
                 >
                   <IconComp size={20} strokeWidth={1.5} style={{ color: PURPLE }} />
                 </div>

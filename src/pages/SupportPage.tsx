@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Send, ChevronDown, ChevronUp, MessageCircle, HelpCircle } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
-const NAVY   = "#0D2344";
-const PURPLE = "#0D2344";
+const NAVY   = "#1E40AF";
+const PURPLE = "#1D4ED8";
 
 const SupportPage = () => {
   const { t, lang } = useI18n();
@@ -50,7 +50,7 @@ const SupportPage = () => {
         <div className="flex items-center gap-2 mb-4">
           <div
             className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "hsl(252 73% 96%)" }}
+            style={{ background: "hsl(206 100% 96%)" }}
           >
             <HelpCircle size={15} strokeWidth={1.5} style={{ color: PURPLE }} />
           </div>
@@ -66,7 +66,7 @@ const SupportPage = () => {
               <div
                 key={i}
                 className="glass-card rounded-2xl overflow-hidden transition-all duration-200"
-                style={{ borderColor: isOpen ? "hsl(252 73% 60% / 0.3)" : undefined }}
+                style={{ borderColor: isOpen ? "hsl(204 100% 45% / 0.3)" : undefined }}
               >
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : i)}
@@ -80,7 +80,7 @@ const SupportPage = () => {
                   </span>
                   <div
                     className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ms-3 transition-all duration-200"
-                    style={{ background: isOpen ? "hsl(252 73% 96%)" : "hsl(220 18% 95%)" }}
+                    style={{ background: isOpen ? "hsl(206 100% 96%)" : "hsl(220 18% 95%)" }}
                   >
                     {isOpen
                       ? <ChevronUp   size={14} strokeWidth={2} style={{ color: PURPLE }} />
@@ -107,7 +107,7 @@ const SupportPage = () => {
         <div className="flex items-center gap-2 mb-4">
           <div
             className="w-8 h-8 rounded-xl flex items-center justify-center"
-            style={{ background: "hsl(252 73% 96%)" }}
+            style={{ background: "hsl(206 100% 96%)" }}
           >
             <MessageCircle size={15} strokeWidth={1.5} style={{ color: PURPLE }} />
           </div>

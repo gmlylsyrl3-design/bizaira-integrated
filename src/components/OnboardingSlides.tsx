@@ -69,7 +69,7 @@ const OnboardingSlides = ({ onComplete }: OnboardingSlidesProps) => {
             <div 
               className="absolute -inset-6 rounded-full blur-3xl animate-pulse opacity-30"
               style={{ 
-                background: "linear-gradient(135deg, hsl(270 40% 75% / 0.6), hsl(270 30% 85% / 0.5))" 
+                background: "linear-gradient(135deg, hsl(206 90% 45% / 0.6), hsl(206 80% 90% / 0.5))" 
               }}
             />
             <img 
@@ -86,7 +86,7 @@ const OnboardingSlides = ({ onComplete }: OnboardingSlidesProps) => {
           </h2>
           <p 
             className="text-base leading-relaxed transition-all duration-300"
-            style={{ color: "hsl(210 30% 35%)" }}
+            style={{ color: "hsl(214 18% 30%)" }}
           >
             {slides[current].desc}
           </p>

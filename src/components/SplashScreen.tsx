@@ -39,7 +39,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           <div 
             className="absolute -inset-8 rounded-full blur-3xl animate-pulse opacity-30"
             style={{ 
-              background: "linear-gradient(135deg, hsl(270 40% 75% / 0.6), hsl(270 30% 85% / 0.5))" 
+              background: "linear-gradient(135deg, hsl(206 90% 45% / 0.6), hsl(206 80% 90% / 0.5))" 
             }}
           />
           {/* Illustration */}
