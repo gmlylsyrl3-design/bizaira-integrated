@@ -157,7 +157,7 @@ const AIMessagesPage = () => {
           </div>
 
           <button onClick={() => handleGenerate()} disabled={isGenerating} className="w-full gradient-glow glow-shadow text-primary-foreground font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-all disabled:opacity-50">
-            {isGenerating ? <><Loader2 size={18} className="animate-spin" />{isHe ? "מנסח..." : "Writing..."}</> : <><Sparkles size={18} />{isHe ? "נסח הודעה" : "Write Message"}</>}
+            {isGenerating ? <><Loader2 size={18} className="animate-spin" />{isHe ? "יוצר..." : "Generating..."}</> : <><Sparkles size={18} />{isHe ? "צור" : "Generate"}</>}
           </button>
         </div>
 

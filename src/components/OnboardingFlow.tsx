@@ -18,7 +18,7 @@ interface OnboardingFlowProps {
 type Step = "greeting" | "business" | "business-info" | "audience" | "audience-info" | "goal" | "done";
 
 const PURPLE = "#1D4ED8";
-const NAVY   = "#1E40AF";
+const NAVY   = "#001830";
 
 const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const { lang } = useI18n();
@@ -290,12 +290,12 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                   <button
                     key={label}
                     onClick={() => setGoal(label)}
-                    className="flex items-center gap-3 py-3.5 px-4 rounded-2xl border-2 transition-all text-start"
+                    className={`flex items-center gap-3 py-3.5 px-4 rounded-2xl border-2 transition-all text-start ${selected ? 'gradient-glow text-white glow-shadow' : ''}`}
                     style={{
-                      background:  selected ? PURPLE  : "hsl(0 0% 100%)",
-                      borderColor: selected ? PURPLE  : "hsl(214 24% 90%)",
-                      color:       selected ? "#fff"  : NAVY,
-                      boxShadow:   selected ? `0 4px 16px -4px ${PURPLE}55` : "none",
+                      background:  selected ? undefined : "hsl(0 0% 100%)",
+                      borderColor: selected ? undefined : "hsl(214 24% 90%)",
+                      color:       selected ? "#fff" : NAVY,
+                      boxShadow:   selected ? undefined : "none",
                     }}
                   >
                     <Icon size={16} strokeWidth={1.5} />

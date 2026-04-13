@@ -65,10 +65,10 @@ export function trackDownload(): void {
 }
 
 export const TYPE_LABELS: Record<CreationType, { he: string; en: string; color: string }> = {
-  message:   { he: "הודעה",         en: "Message",   color: "hsl(210 100% 12%)" },
-  analytics: { he: "ניתוח עסקי",   en: "Analytics", color: "hsl(210 80% 20%)"  },
-  pricing:   { he: "תמחור",         en: "Pricing",   color: "hsl(210 60% 25%)"  },
-  time:      { he: "ניהול זמן",     en: "Time Mgmt", color: "hsl(210 40% 30%)"  },
+  message:   { he: "הודעה",         en: "Message",   color: "hsl(211 100% 9%)" },
+  analytics: { he: "ניתוח עסקי",   en: "Analytics", color: "hsl(211 100% 12%)"  },
+  pricing:   { he: "תמחור",         en: "Pricing",   color: "hsl(211 90% 15%)"  },
+  time:      { he: "ניהול זמן",     en: "Time Mgmt", color: "hsl(211 80% 18%)"  },
   image:     { he: "תמונה",         en: "Image",     color: "hsl(39 48% 45%)"   },
   photo:     { he: "סטודיו תמונות", en: "Photo",     color: "hsl(39 40% 50%)"   },
 };

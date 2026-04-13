@@ -31,7 +31,7 @@ const STYLES: { id: StyleId; he: string; en: string }[] = [
 
 const PRESET_COLORS = [
   "#ffffff", "#111111", "#f5f0e8", "#1a1a3e", "#f5e0e0", "#d4ddd0",
-  "#fef3c7", "#dbeafe", "#fce7f3", "#d1fae5", "#e0e7ff", "#fde68a",
+  "#fef3c7", "#e8f1ff", "#fce7f3", "#d1fae5", "#f0f5ff", "#fde68a",
 ];
 
 const RATIOS = [
@@ -69,6 +69,7 @@ const ImageStudioPage = () => {
   const [results, setResults] = useState<string[]>([]);
   const [activeResult, setActiveResult] = useState(0);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [viewMode, setViewMode] = useState<"before" | "after">("after");
 
   const [imageType, setImageType] = useState<ImageType>("product");
   const [style, setStyle] = useState<StyleId>("realistic");
@@ -76,6 +77,7 @@ const ImageStudioPage = () => {
   const [customColor, setCustomColor] = useState("#ffffff");
   const [ratio, setRatio] = useState("1:1");
   const [description, setDescription] = useState("");
+  const [storyText, setStoryText] = useState("");
   const [sidebarTab, setSidebarTab] = useState<"type" | "style" | "details">("type");
 
   const usage = getUsage();
@@ -107,7 +109,7 @@ const ImageStudioPage = () => {
         soft: "soft, gentle, warm dreamy aesthetic", modern: "contemporary modern, bold and crisp",
       };
 
-      const base = `Create a ${typeMap[imageType]}. Style: ${styleMap[style]}. Background color: ${bgColor}. Aspect ratio: ${ratio}. ${description ? `Details: ${description}.` : ""} Professional quality, perfect composition, high resolution.`;
+      const base = `Create a ${typeMap[imageType]}. Style: ${styleMap[style]}. Background color: ${bgColor}. Aspect ratio: ${ratio}. ${description ? `Details: ${description}.` : ""} ${imageType === "banner" && storyText ? `Story text: "${storyText}". Include this text prominently on the banner.` : ""} Professional quality, perfect composition, high resolution.`;
 
       const promises = [
         generateImage(base, uploadedImage || undefined),
@@ -140,7 +142,7 @@ const ImageStudioPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-luxury-gray-50 to-luxury-white">
+    <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-6 py-8">
 
         {/* Header */}
@@ -196,7 +198,43 @@ const ImageStudioPage = () => {
           <div className="lg:col-span-2 space-y-6">
             <div className="luxury-card rounded-xl overflow-hidden min-h-[400px] flex items-center justify-center relative">
               {results.length > 0 ? (
-                <img src={results[activeResult]} alt={`Generated ${activeResult + 1}`} className="w-full h-full object-contain max-h-[500px]" />
+                <>
+                  {/* Before/After Toggle */}
+                  <div className="absolute top-4 left-4 z-10 flex bg-white/80 backdrop-blur-sm rounded-lg p-1">
+                    <button
+                      onClick={() => setViewMode("before")}
+                      className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
+                        viewMode === "before" ? "bg-primary text-white" : "text-gray-600 hover:bg-gray-100"
+                      }`}
+                    >
+                      {isHe ? "לפני" : "Before"}
+                    </button>
+                    <button
+                      onClick={() => setViewMode("after")}
+                      className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
+                        viewMode === "after" ? "bg-primary text-white" : "text-gray-600 hover:bg-gray-100"
+                      }`}
+                    >
+                      {isHe ? "אחרי" : "After"}
+                    </button>
+                  </div>
+
+                  {viewMode === "after" ? (
+                    <img src={results[activeResult]} alt={`Generated ${activeResult + 1}`} className="w-full h-full object-contain max-h-[500px]" />
+                  ) : (
+                    <div className="p-6 text-center space-y-4">
+                      <h3 className="text-lg font-semibold text-primary">{isHe ? "הפרטים שהוזנו" : "Entered Details"}</h3>
+                      <div className="space-y-2 text-sm text-gray-600">
+                        <p><strong>{isHe ? "סוג:" : "Type:"}</strong> {IMAGE_TYPES.find(t => t.id === imageType)?.[lang] || imageType}</p>
+                        <p><strong>{isHe ? "סגנון:" : "Style:"}</strong> {STYLES.find(s => s.id === style)?.[lang] || style}</p>
+                        <p><strong>{isHe ? "צבע רקע:" : "Background:"}</strong> {bgColor}</p>
+                        <p><strong>{isHe ? "יחס:" : "Ratio:"}</strong> {ratio}</p>
+                        {description && <p><strong>{isHe ? "תיאור:" : "Description:"}</strong> {description}</p>}
+                        {imageType === "banner" && storyText && <p><strong>{isHe ? "טקסט סטורי:" : "Story Text:"}</strong> {storyText}</p>}
+                      </div>
+                    </div>
+                  )}
+                </>
               ) : uploadedImage ? (
                 <div className="relative w-full h-full min-h-[400px] flex items-center justify-center">
                   <img src={uploadedImage} alt="Uploaded" className="max-h-[400px] object-contain rounded-lg" />
@@ -249,12 +287,12 @@ const ImageStudioPage = () => {
                 {isGenerating ? (
                   <div className="flex items-center justify-center gap-2">
                     <Loader2 size={18} className="animate-spin" />
-                    {isHe ? "יוצר תמונות..." : "Creating..."}
+                    {isHe ? "יוצר..." : "Generating..."}
                   </div>
                 ) : (
                   <div className="flex items-center justify-center gap-2">
                     <Sparkles size={18} />
-                    {isHe ? "צור תמונות" : "Create Images"}
+                    {isHe ? "צור" : "Generate"}
                   </div>
                 )}
               </button>
@@ -439,6 +477,21 @@ const ImageStudioPage = () => {
                       className="w-full luxury-glass px-4 py-3 rounded-lg luxury-body-small text-luxury-gray-700 placeholder-luxury-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-luxury-gold/20"
                     />
                   </div>
+
+                  {imageType === "banner" && (
+                    <div>
+                      <label className="luxury-body-small font-medium text-luxury-black block mb-3">
+                        {isHe ? "מה אתה רוצה לכתוב על הסטורי?" : "What do you want to write on the Story?"}
+                      </label>
+                      <textarea
+                        value={storyText}
+                        onChange={(e) => setStoryText(e.target.value)}
+                        placeholder={isHe ? "הכנס טקסט לסטורי..." : "Enter text for the story..."}
+                        rows={3}
+                        className="w-full luxury-glass px-4 py-3 rounded-lg luxury-body-small text-luxury-gray-700 placeholder-luxury-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-luxury-gold/20"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             ) : null}

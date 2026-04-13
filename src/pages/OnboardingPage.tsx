@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Sparkles, ArrowLeft, ArrowRight, Briefcase, User, Mail, Lock, Wand2, BarChart3, MessageSquare, Camera } from "lucide-react";
 import SparkleIcon from "@/components/SparkleIcon";
 import bizairaLogo from "@/assets/bizaira-logo.png";
-import { useI18n } from "@/lib/i18n";
+import OnboardingFlow from "@/components/OnboardingFlow";
 
 const BUSINESS_TYPES_HE = [
   "קוסמטיקה וטיפוח", "עיצוב פנים", "צילום", "מאמנת עסקית",
@@ -24,13 +24,18 @@ const OnboardingPage = () => {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showOnboardingFlow, setShowOnboardingFlow] = useState(false);
 
   const businessTypes = lang === "he" ? BUSINESS_TYPES_HE : BUSINESS_TYPES_EN;
   const BackArrow = lang === "he" ? ArrowLeft : ArrowRight;
   const NextArrow = lang === "he" ? ArrowRight : ArrowLeft;
 
   const handleFinish = () => {
-    navigate("/dashboard");
+    setShowOnboardingFlow(true);
+  };
+
+  const handleOnboardingComplete = () => {
+    navigate("/verification");
   };
 
   const features = [
@@ -253,6 +258,10 @@ const OnboardingPage = () => {
           </div>
         )}
       </div>
+
+      {showOnboardingFlow && (
+        <OnboardingFlow onComplete={handleOnboardingComplete} />
+      )}
     </div>
   );
 };

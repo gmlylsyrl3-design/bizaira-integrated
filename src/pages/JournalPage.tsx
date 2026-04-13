@@ -254,10 +254,10 @@ const JournalPage = () => {
                 </button>
                 <button
                   onClick={() => postpone(task.id)}
-                  className="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
+                  className="p-1.5 rounded-lg hover:bg-primary/10 dark:hover:bg-primary/20 transition-all"
                   title={isHe ? "דחה למחר" : "Postpone to tomorrow"}
                 >
-                  <SkipForward size={14} className="text-blue-500/70" />
+                  <SkipForward size={14} className="text-primary/70" />
                 </button>
                 <button
                   onClick={() => openEdit(task)}
@@ -378,7 +378,7 @@ const JournalPage = () => {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-2">
             {[
-              { label: isHe ? "ממתינות" : "Pending", value: dayTasks.filter(t => t.status !== "done").length, color: "text-blue-500" },
+              { label: isHe ? "ממתינות" : "Pending", value: dayTasks.filter(t => t.status !== "done").length, color: "text-primary" },
               { label: isHe ? "חשובות" : "Important", value: importantPending.length, color: "text-amber-500" },
               { label: isHe ? "הושלמו" : "Done", value: doneTasks.length, color: "text-emerald-500" },
             ].map(s => (

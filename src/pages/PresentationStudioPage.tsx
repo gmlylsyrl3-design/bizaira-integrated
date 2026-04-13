@@ -25,12 +25,12 @@ type DesignTheme = "dark-luxury" | "cream" | "white" | "black" | "soft" | "clean
 const THEMES: Record<DesignTheme, { bg: string; fg: string; accent: string; cardBg: string; label: { he: string; en: string } }> = {
   "dark-luxury": { bg: "bg-[#1a1625]", fg: "text-[#f0e6d3]", accent: "text-[#c9a96e]", cardBg: "linear-gradient(135deg, #1a1625 0%, #2d2140 100%)", label: { he: "יוקרתי כהה", en: "Dark Luxury" } },
   "cream":       { bg: "bg-[#f5f0e8]", fg: "text-[#3d3427]", accent: "text-[#8b6f47]", cardBg: "linear-gradient(135deg, #f5f0e8 0%, #e8dcc8 100%)", label: { he: "שמנת ובז׳", en: "Cream & Beige" } },
-  "white":       { bg: "bg-white",      fg: "text-[#1a1a2e]", accent: "text-[#4361ee]", cardBg: "linear-gradient(135deg, #ffffff 0%, #e8ecf8 100%)", label: { he: "מודרני לבן", en: "Modern White" } },
+  "white":       { bg: "bg-white",      fg: "text-[#1a1a2e]", accent: "text-[#001830]", cardBg: "linear-gradient(135deg, #ffffff 0%, #e8ecf8 100%)", label: { he: "מודרני לבן", en: "Modern White" } },
   "black":       { bg: "bg-[#0a0a0a]",  fg: "text-white",      accent: "text-[#e63946]", cardBg: "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%)", label: { he: "שחור דרמטי", en: "Dramatic Black" } },
   "soft":        { bg: "bg-[#f8f4ff]",  fg: "text-[#2d2b55]", accent: "text-[#7c3aed]", cardBg: "linear-gradient(135deg, #f8f4ff 0%, #ede4ff 100%)", label: { he: "סגול עדין", en: "Soft Purple" } },
-  "clean":       { bg: "bg-[#f7f9fc]",  fg: "text-[#1e293b]", accent: "text-[#0ea5e9]", cardBg: "linear-gradient(135deg, #f7f9fc 0%, #dbeafe 100%)", label: { he: "עסקי נקי", en: "Clean Business" } },
+  "clean":       { bg: "bg-[#f7f9fc]",  fg: "text-[#1e293b]", accent: "text-[#001830]", cardBg: "linear-gradient(135deg, #f7f9fc 0%, #dbeafe 100%)", label: { he: "עסקי נקי", en: "Clean Business" } },
   "rose":        { bg: "bg-[#fff0f3]",  fg: "text-[#4a1528]", accent: "text-[#e11d48]", cardBg: "linear-gradient(135deg, #fff0f3 0%, #ffe4e6 100%)", label: { he: "ורוד אלגנטי", en: "Rose Elegant" } },
-  "ocean":       { bg: "bg-[#0c1929]",  fg: "text-[#e0f2fe]", accent: "text-[#38bdf8]", cardBg: "linear-gradient(135deg, #0c1929 0%, #0c4a6e 100%)", label: { he: "אוקיינוס", en: "Ocean Deep" } },
+  "ocean":       { bg: "bg-[#0c1929]",  fg: "text-[#e0f2fe]", accent: "text-[#001830]", cardBg: "linear-gradient(135deg, #0c1929 0%, #0c4a6e 100%)", label: { he: "אוקיינוס", en: "Ocean Deep" } },
   "forest":      { bg: "bg-[#f0f5f0]",  fg: "text-[#1a3a2a]", accent: "text-[#16a34a]", cardBg: "linear-gradient(135deg, #f0f5f0 0%, #dcfce7 100%)", label: { he: "יער ירוק", en: "Forest Green" } },
   "sunset":      { bg: "bg-[#1f1020]",  fg: "text-[#fef3c7]", accent: "text-[#f97316]", cardBg: "linear-gradient(135deg, #1f1020 0%, #431407 100%)", label: { he: "שקיעה", en: "Sunset" } },
 };

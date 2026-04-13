@@ -38,25 +38,10 @@ const LandingPage = () => {
       {/* Hero — Elegant centered title with gold/lilac glow */}
       <div className="text-center mb-10 pt-8">
         <h1 
-          className="text-4xl md:text-6xl font-black leading-tight tracking-tight"
-          style={{
-            background: "linear-gradient(135deg, hsl(205 100% 47%), hsl(206 96% 40%), hsl(212 80% 55%))",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-            textShadow: "0 0 60px hsl(205 100% 47% / 0.3)"
-          }}
+          className="text-4xl md:text-6xl font-black leading-tight tracking-tight text-primary"
         >
           {lang === "he" ? "הכל במקום אחד" : "Everything In One Place"}
         </h1>
-        {/* Decorative gold/lilac divider */}
-        <div 
-          className="w-24 h-1 mx-auto mt-5 rounded-full"
-          style={{ 
-            background: "linear-gradient(90deg, transparent, hsl(205 100% 47%), hsl(206 96% 40%), transparent)" 
-          }}
-          aria-hidden="true"
-        />
       </div>
 
       {/* Auth section for non-logged-in users */}
@@ -84,14 +69,13 @@ const LandingPage = () => {
       {/* Welcome for logged-in users */}
       {user && (
         <section className="text-center">
-          <p className="text-lg text-foreground font-semibold">
-            {lang === "he"
-              ? `שלום, ${user.user_metadata?.full_name || ""}`
-              : `Hello, ${user.user_metadata?.full_name || ""}`}
-          </p>
-          <p className="text-sm text-muted-foreground mt-1">
-            {lang === "he" ? "נווט ליצירה דרך התפריט למטה" : "Navigate to Create from the menu below"}
-          </p>
+          <button
+            onClick={() => navigate("/create")}
+            className="gradient-glow glow-shadow text-primary-foreground font-bold py-4 px-8 rounded-2xl text-lg flex items-center justify-center gap-2 hover:scale-[1.02] transition-all mx-auto"
+          >
+            <Sparkles size={20} />
+            {lang === "he" ? "הצטרף לסטודיו" : "Join the Studio"}
+          </button>
         </section>
       )}
     </section>

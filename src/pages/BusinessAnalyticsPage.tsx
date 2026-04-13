@@ -35,6 +35,8 @@ const BusinessAnalyticsPage = () => {
   const [aiAnswer, setAiAnswer] = useState("");
   const [isAsking, setIsAsking] = useState(false);
   const [activeTab, setActiveTab] = useState<"overview" | "monthly" | "ask">("overview");
+  const [generatedReport, setGeneratedReport] = useState("");
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
 
   const revenue = Number(monthlyRevenue) || 0;
   const expenses = Number(monthlyExpenses) || 0;
@@ -91,6 +93,28 @@ const BusinessAnalyticsPage = () => {
       setAiAnswer(isHe ? "לא הצלחתי לייצר תשובה. נסה שוב." : "Could not generate answer. Please try again.");
     } finally {
       setIsAsking(false);
+    }
+  };
+
+  const handleGenerateReport = async () => {
+    if (!dataEntered) return;
+    setIsGeneratingReport(true);
+    try {
+      const prompt = isHe
+        ? `צור דוח ניתוח עסקי מקיף בעברית. התבסס על הנתונים הבאים: הכנסות חודשיות ${currency}${revenue.toLocaleString()}, הוצאות ${currency}${expenses.toLocaleString()}, רווח נקי ${currency}${profit.toLocaleString()} (${profitMargin}% מרווח רווח), ${clients} לקוחות חדשים. כלול המלצות לשיפור, ניתוח מגמות, ותחזית.`
+        : `Create a comprehensive business analytics report. Based on data: monthly revenue ${currency}${revenue.toLocaleString()}, expenses ${currency}${expenses.toLocaleString()}, net profit ${currency}${profit.toLocaleString()} (${profitMargin}% margin), ${clients} new clients. Include improvement recommendations, trend analysis, and forecast.`;
+      const report = await generateText(prompt);
+      setGeneratedReport(report);
+      saveCreation({
+        type: "analytics",
+        title: isHe ? "דוח ניתוח עסקי" : "Business Analytics Report",
+        content: report,
+        metadata: { revenue, expenses, clients, profitMargin },
+      });
+    } catch {
+      setGeneratedReport(isHe ? "לא הצלחתי לייצר דוח. נסה שוב." : "Could not generate report. Please try again.");
+    } finally {
+      setIsGeneratingReport(false);
     }
   };
 
@@ -260,6 +284,25 @@ const BusinessAnalyticsPage = () => {
                     ))}
                   </div>
                 </div>
+
+                {/* Generate Report */}
+                <div className="glass-card rounded-xl p-4">
+                  <button
+                    onClick={handleGenerateReport}
+                    disabled={isGeneratingReport}
+                    className="w-full gradient-glow text-primary-foreground font-bold py-3 rounded-xl flex items-center justify-center gap-2 hover:scale-[1.02] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {isGeneratingReport ? <Loader2 size={18} className="animate-spin" /> : <FileText size={18} />}
+                    {isHe ? "יוצר..." : "Generating..."}
+                  </button>
+                  {generatedReport && (
+                    <div className="mt-4 p-4 bg-background/60 rounded-lg border border-border/30">
+                      <h4 className="font-semibold mb-2">{isHe ? "דוח ניתוח עסקי" : "Business Analysis Report"}</h4>
+                      <p className="text-sm whitespace-pre-line">{generatedReport}</p>
+                    </div>
+                  )}
+                </div>
+
                 <button onClick={() => setDataEntered(false)} className="w-full glass-card py-2.5 rounded-xl text-xs font-bold text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5 transition-all">
                   <FileText size={14} />{isHe ? "ערוך נתונים" : "Edit Data"}
                 </button>

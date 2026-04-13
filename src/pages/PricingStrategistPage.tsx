@@ -160,7 +160,7 @@ const PricingStrategistPage = () => {
                 {isHe ? `העלאה של 10% (ל-₪${Math.round(recommendedPrice * 1.1)}) תגדיל רווח ב-₪${Math.round(recommendedPrice * 0.1 * 20)}/חודש.` : `10% increase (to ₪${Math.round(recommendedPrice * 1.1)}) would boost profit by ₪${Math.round(recommendedPrice * 0.1 * 20)}/month.`}
               </div>
               <div className="bg-background/40 rounded-lg p-3 text-sm text-foreground border border-border/20">
-                <Package size={12} className="inline text-blue-500 mr-1" />
+                <Package size={12} className="inline text-primary mr-1" />
                 {isHe ? `חבילה של 3 ב-₪${Math.round(recommendedPrice * 2.7)} במקום ₪${recommendedPrice * 3}.` : `Bundle 3 at ₪${Math.round(recommendedPrice * 2.7)} vs ₪${recommendedPrice * 3}.`}
               </div>
             </div>

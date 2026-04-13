@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Send, ChevronDown, ChevronUp, MessageCircle, HelpCircle } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
-const NAVY   = "#1E40AF";
+const NAVY   = "#001830";
 const PURPLE = "#1D4ED8";
 
 const SupportPage = () => {
@@ -66,7 +66,7 @@ const SupportPage = () => {
               <div
                 key={i}
                 className="glass-card rounded-2xl overflow-hidden transition-all duration-200"
-                style={{ borderColor: isOpen ? "hsl(204 100% 45% / 0.3)" : undefined }}
+                style={{ borderColor: isOpen ? "hsl(211 100% 9% / 0.3)" : undefined }}
               >
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : i)}
